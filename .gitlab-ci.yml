@@ -1,0 +1,62 @@
+image: node:alpine
+
+services:
+  - name: docker:dind
+    entrypoint: ["env", "-u", "DOCKER_HOST"]
+    command: ["dockerd-entrypoint.sh"]
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  # See https://github.com/docker-library/docker/pull/166
+  DOCKER_TLS_CERTDIR: ""
+
+
+cache:
+  key: '$CI_BUILD_REPO'
+  paths:
+    - node_modules/
+
+stages:
+  - build
+  - docker-build
+
+# ------------------------------------------------------------------
+# Build Anchors
+# ------------------------------------------------------------------
+
+.build_environment:
+  image: docker:$DOCKER_VERSION
+  script:
+    - docker login -u ssegning -p $DOCKER_PASSWORD
+    - docker build --pull -t bayamsell/sms-test-console:${TAG_NAME} .
+    - docker push bayamsell/sms-test-console
+
+app_build:
+  stage: build
+  script:
+    - yarn --non-interactive --silent
+    - yarn build
+  artifacts:
+    paths:
+      - dist/
+      - package.json
+
+app_prod:
+  extends: .build_environment
+  stage: docker-build
+  variables:
+    TAG_NAME: "latest"
+  environment:
+    name: Production
+  only:
+    - master
+
+app_develop:
+  extends: .build_environment
+  stage: docker-build
+  variables:
+    TAG_NAME: "dev-$CI_BUILD_ID"
+  environment:
+    name: Dev
+  only:
+    - develop
