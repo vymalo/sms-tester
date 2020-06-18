@@ -45,13 +45,14 @@ export class AppComponent implements OnInit {
       .subscribe(data => {
         this.dataSource.data = data;
       }, (err: HttpErrorResponse) => {
-        console.error({err});
+        console.warn(err);
       });
 
-    this.socketService.sub<SmsEntity>('sms', more => {
-      if (this.dataSource.data) {
-        this.dataSource.data.push(more);
-      }
+    this.socketService.sub<SmsEntity>('sms', (more) => {
+      const prev = this.dataSource.data || [];
+      prev.unshift(more);
+      // this.dataSource.connect().next(prev);
+      this.dataSource.data = prev;
     });
   }
 

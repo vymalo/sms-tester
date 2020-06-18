@@ -1,16 +1,20 @@
-import {SubscribeMessage, WebSocketGateway} from '@nestjs/websockets';
+import {OnGatewayInit, WebSocketGateway} from '@nestjs/websockets';
 import {SmsService} from './sms.service';
+import {Server} from 'socket.io';
 
 @WebSocketGateway({path: '/api/socket.io'})
-export class SmsGateway {
+export class SmsGateway implements OnGatewayInit {
 
   constructor(
     protected readonly smsService: SmsService
   ) {
   }
 
-  @SubscribeMessage('sms')
-  handleMessage() {
-    return this.smsService.getNext();
+  afterInit(server: Server): any {
+    this.smsService.getNext()
+      .subscribe(val => {
+        server.emit('sms', val);
+      });
   }
+
 }

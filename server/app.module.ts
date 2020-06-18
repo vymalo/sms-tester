@@ -4,6 +4,7 @@ import {join} from 'path';
 import {AppServerModule} from '../src/main.server';
 import {SmsController} from './sms/sms.controller';
 import {SmsService} from './sms/sms.service';
+import {SmsGateway} from './sms/sms.gateway';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import {SmsService} from './sms/sms.service';
     SmsController
   ],
   providers: [
-    SmsService
+    SmsService,
+    SmsGateway
   ]
 })
 export class AppModule {

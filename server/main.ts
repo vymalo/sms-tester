@@ -3,11 +3,10 @@ import { AppModule } from './app.module';
 
 async function bootstrap(port = process.env.PORT || 4000) {
   const before = new Date().getTime();
-  const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api');
-  app.enableCors({
-    credentials: true
+  const app = await NestFactory.create(AppModule, {
+    logger: ['debug', 'log', 'verbose', 'error', 'warn'],
   });
+  app.setGlobalPrefix('api');
   await app.listen(port, () => {
     const now = new Date().getTime();
     console.log(`\nApp started in ${now - before}ms on http://localhost:${port}\n`);

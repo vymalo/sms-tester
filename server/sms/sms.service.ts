@@ -5,17 +5,17 @@ import {Subject} from 'rxjs';
 @Injectable()
 export class SmsService {
 
-  protected readonly db = new Set<SmsEntity>();
+  protected readonly db = new Array<SmsEntity>();
   protected readonly bus = new Subject<SmsEntity>();
 
   // TODO Pagination
   getList(page: number, size: number) {
-    return Array.from(this.db);
+    return this.db;
   }
 
   create(entity: SmsEntity) {
-    entity.id = this.db.size + 1;
-    this.db.add(entity);
+    entity.id = this.db.length + 1;
+    this.db.unshift(entity);
     this.bus.next(entity);
     return entity;
   }
