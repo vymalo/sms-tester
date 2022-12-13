@@ -38,7 +38,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
     "classlist.js": "^1.1.20150312",
-    "express": "^4.15.2",
+    "express": "^4.17.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~6.5.4",
     "socket.io-client": "^3.0.0",
